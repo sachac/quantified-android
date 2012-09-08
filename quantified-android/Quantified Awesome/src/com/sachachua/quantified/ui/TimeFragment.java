@@ -12,30 +12,35 @@ import android.support.v4.widget.SimpleCursorAdapter;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.sachachua.quantified.R;
 import com.sachachua.quantified.data.DatabaseHandler;
+import com.sachachua.quantified.data.Record;
 import com.sachachua.quantified.data.RecordCategoryProvider;
 
-public class TimeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, TextWatcher {
+public class TimeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, TextWatcher, OnItemClickListener {
     private ListView mCategories;
     private DatabaseHandler dbHandler;
     private static final int RECORD_CATEGORIES_LOADER = 0x01;
+	private static final String TAG = "TimeFragment";
     private SimpleCursorAdapter adapter;
 	private EditText mEditQuickTrack;
+	private Button mTrack;
 	private Object mCurFilter;
     
-    public TimeFragment(DatabaseHandler dbHandler) {
-    	this.dbHandler = dbHandler;
-    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
+    	dbHandler = new DatabaseHandler(getActivity());
     }
     
     @Override
@@ -51,10 +56,12 @@ public class TimeFragment extends Fragment implements LoaderManager.LoaderCallba
     			android.R.layout.simple_list_item_1,
     			null, uiBindFrom, uiBindTo, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
     	mCategories.setAdapter(adapter);
+    	mCategories.setOnItemClickListener(this);
     	
     	// Listen for changes
     	mEditQuickTrack = (EditText) view.findViewById(R.id.edit_quick_track);
     	mEditQuickTrack.addTextChangedListener(this);
+    	
     	return view;
     }
 	@Override
@@ -89,5 +96,25 @@ public class TimeFragment extends Fragment implements LoaderManager.LoaderCallba
 	@Override
 	public void beforeTextChanged(CharSequence s, int start, int count,
 			int after) {
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		// Create a record with the current timestamp
+		Cursor cursor = (Cursor) parent.getItemAtPosition(position);
+		trackCategory(cursor.getInt(0));
+	}
+	
+	public void trackCategory(int recordCategoryId) {
+		Record rec = new Record(recordCategoryId);
+		Log.d(TAG, "Adding entry for " + recordCategoryId);
+		dbHandler.addRecord(rec);
+		mEditQuickTrack.setText(null);
+	}
+	
+	public void handleTrack() {
+		// Parse the output
+		Cursor cursor = (Cursor) mCategories.getItemAtPosition(0);
+		trackCategory(cursor.getInt(0));
 	}
 }

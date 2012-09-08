@@ -2,6 +2,7 @@
 
     <string name="app_name">Quantified Awesome</string>
     <string name="title_clothing">Clothing</string>
+    <string name="title_records">Records</string>
     <string name="title_time">Time</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
@@ -32,5 +33,12 @@
     <string name="track">Track</string>
     <string name="activity">Activity</string>
     <string name="view">Details</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="entry">Entry</string>
+    <string name="delete_this_record">Delete this record?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="delete">Delete</string>
  
 </resources>

@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 
 import com.sachachua.quantified.data.DatabaseHandler;
 import com.sachachua.quantified.tasks.LoadRecordCategoriesTask;
+import com.sachachua.quantified.ui.RecordsFragment;
 import com.sachachua.quantified.ui.TimeFragment;
 
 public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
@@ -39,6 +40,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
                         android.R.id.text1,
                         new String[]{
                                 getString(R.string.title_time),
+                                getString(R.string.title_records),
                                 getString(R.string.title_clothing),
                         }),
                 this);
@@ -66,16 +68,23 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
 
     
     private static final int TIME_POSITION = 0;
+    private static final int RECORDS_POSITION = 1;
+    
     @Override
     public boolean onNavigationItemSelected(int position, long id) {
         // When the given tab is selected, show the tab contents in the container
     	switch (position) {
     	case TIME_POSITION:
-    		Fragment fragment = new TimeFragment(dbHandler);
+    		Fragment fragment = new TimeFragment();
     		getSupportFragmentManager().beginTransaction()
                 .replace(R.id.container, fragment)
                 .commit();
         return true;
+    	case RECORDS_POSITION:
+    		Fragment recordList = new RecordsFragment();
+    		getSupportFragmentManager().beginTransaction()
+            .replace(R.id.container, recordList)
+            .commit();
     	}
     	return false;
     }
