@@ -6,7 +6,7 @@
     <string name="title_time">Time</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">Quantified Awesome</string>
     <string name="login_activity_username_label">Username</string>
     <string name="login_activity_password_label">Password</string>
     <string name="login_activity_ok_button">Log in</string>
@@ -40,5 +40,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="delete">Delete</string>
+    <string name="save">Save</string>
  
 </resources>

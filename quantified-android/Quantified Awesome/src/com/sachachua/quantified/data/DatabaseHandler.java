@@ -104,7 +104,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		db.close();
 	}
 
-	public void addRecord(Record r) {
+	public long addRecord(Record r) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		Log.d(TAG, r.toString());
 		ContentValues values = new ContentValues();
@@ -127,8 +127,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		if (r.getSynced() != null) {
 			values.put(KEY_SYNCED, r.getSynced().getTime());
 		}
-		db.insert(TABLE_RECORDS, null, values);
+		long id = db.insert(TABLE_RECORDS, null, values);
 		db.close();
+		return id;
 	}
 
 
@@ -182,7 +183,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return cur;
 	}
 
-	public Record getRecord(int id) {
+	public Record getRecord(long id) {
 		Cursor cur = getReadableDatabase().rawQuery(
 				"SELECT " 
 						+ TABLE_RECORDS + "." + KEY_ID + ", " 
@@ -230,10 +231,37 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		}
 	}
 
-	public void deleteRecord(int id) {
+	public void deleteRecord(long id) {
 		SQLiteDatabase db = this.getWritableDatabase();
 		db.delete(TABLE_RECORDS, KEY_ID + " = ?",
 				new String[] { String.valueOf(id) });
 		db.close();
+	}
+
+	public int updateRecord(Record r) {
+		SQLiteDatabase db = this.getWritableDatabase();
+		Log.d(TAG, r.toString());
+		ContentValues values = new ContentValues();
+		values.put(KEY_SOURCE, r.getSource());
+		values.put(KEY_SOURCE_ID, r.getSourceId());
+		values.put(KEY_TIMESTAMP, r.getTimestamp().getTime());
+		values.put(KEY_RECORD_CATEGORY_ID, r.getRecordCategoryId());
+		values.put(KEY_DATA, r.getData());
+		if (r.getEndTimestamp() != null) {
+			values.put(KEY_END_TIMESTAMP, r.getEndTimestamp().getTime());
+		}
+		values.put(KEY_DURATION, r.getDuration());
+		values.put(KEY_CREATED_AT, r.getCreatedAt().getTime()); 
+		values.put(KEY_UPDATED_AT, r.getUpdatedAt().getTime()); 
+		values.put(KEY_DATE, r.getDate().getTime());
+		values.put(KEY_MANUAL, r.isManual() ? 1 : 0);
+		if (r.getSynced() != null) {
+			values.put(KEY_SYNCED, r.getSynced().getTime());
+		}
+
+	    // updating row
+	    return db.update(TABLE_RECORDS, values, KEY_ID + " = ?",
+	            new String[] { String.valueOf(r.getId()) });
+	    
 	}
 }

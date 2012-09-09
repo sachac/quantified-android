@@ -10,10 +10,14 @@ import android.widget.ArrayAdapter;
 
 import com.sachachua.quantified.data.DatabaseHandler;
 import com.sachachua.quantified.tasks.LoadRecordCategoriesTask;
+import com.sachachua.quantified.ui.OnRecordSelectedListener;
+import com.sachachua.quantified.ui.OnTimeTrackListener;
+import com.sachachua.quantified.ui.RecordDetailFragment;
 import com.sachachua.quantified.ui.RecordsFragment;
 import com.sachachua.quantified.ui.TimeFragment;
 
-public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener {
+
+public class MainActivity extends FragmentActivity implements ActionBar.OnNavigationListener, OnRecordSelectedListener, OnTimeTrackListener {
 
     private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
     private DatabaseHandler dbHandler;
@@ -75,11 +79,8 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
         // When the given tab is selected, show the tab contents in the container
     	switch (position) {
     	case TIME_POSITION:
-    		Fragment fragment = new TimeFragment();
-    		getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .commit();
-        return true;
+    		startRecord();
+    		return true;
     	case RECORDS_POSITION:
     		Fragment recordList = new RecordsFragment();
     		getSupportFragmentManager().beginTransaction()
@@ -99,5 +100,26 @@ public class MainActivity extends FragmentActivity implements ActionBar.OnNaviga
     		return true;
     	}
     	return false;
+    }
+    
+	@Override
+	public void onRecordSelected(long id) {
+		RecordDetailFragment fragment = (RecordDetailFragment) getSupportFragmentManager().findFragmentById(R.id.record_details);
+        if (fragment == null || fragment.getShownId() != id) {
+            // Make new fragment to show this selection.
+            fragment = new RecordDetailFragment(id);
+        }
+		getSupportFragmentManager().beginTransaction()
+            .replace(R.id.container, fragment)
+            .addToBackStack(null)
+            .commit();
+	}
+
+	@Override
+	public void startRecord() {
+		Fragment fragment = new TimeFragment();
+		getSupportFragmentManager().beginTransaction()
+            .replace(R.id.container, fragment)
+            .commit();
     }
 }

@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,8 +20,19 @@ import com.sachachua.quantified.R;
 import com.sachachua.quantified.data.DatabaseHandler;
 
 public class RecordsFragment extends Fragment implements OnClickListener {
+	private OnRecordSelectedListener mRecordSelectedListener;
+    
+	@Override
+	public void onAttach(Activity activity) {
+    	 super.onAttach(activity);
+         try {
+             mRecordSelectedListener = (OnRecordSelectedListener) activity;
+         } catch (ClassCastException e) {
+             throw new ClassCastException(activity.toString() + " must implement OnRecordSelectedListener");
+         }
+	}
 
-    private TableLayout mTable;
+	private TableLayout mTable;
 	private DatabaseHandler dbHandler;
 
 	@Override
@@ -66,7 +78,7 @@ public class RecordsFragment extends Fragment implements OnClickListener {
     	return view;
     }
 
-	public void onClick(View v) {
+    public void onClick(View v) {
 		TableRow row = null;
 		// TODO Auto-generated method stub
 		if (v instanceof TextView) {
@@ -77,17 +89,7 @@ public class RecordsFragment extends Fragment implements OnClickListener {
 		Integer tag = (Integer) row.getTag();
 		if (tag != null) {
 			int id = tag.intValue();
-			RecordDetailFragment fragment = (RecordDetailFragment) getFragmentManager().findFragmentById(R.id.record_details);
-            if (fragment == null || fragment.getShownId() != id) {
-                // Make new fragment to show this selection.
-                fragment = new RecordDetailFragment(id);
-            }
-			getActivity().getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, fragment)
-                .addToBackStack(null)
-                .commit();
+			mRecordSelectedListener.onRecordSelected(id);
 		}
 	}
-    
-	
 }

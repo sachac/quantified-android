@@ -1,6 +1,7 @@
 package com.sachachua.quantified.ui;
 
 
+import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,6 +30,7 @@ import com.sachachua.quantified.data.RecordCategoryProvider;
 
 public class TimeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, TextWatcher, OnItemClickListener {
     private ListView mCategories;
+    private OnRecordSelectedListener mRecordSelectedListener;
     private DatabaseHandler dbHandler;
     private static final int RECORD_CATEGORIES_LOADER = 0x01;
 	private static final String TAG = "TimeFragment";
@@ -108,13 +110,25 @@ public class TimeFragment extends Fragment implements LoaderManager.LoaderCallba
 	public void trackCategory(int recordCategoryId) {
 		Record rec = new Record(recordCategoryId);
 		Log.d(TAG, "Adding entry for " + recordCategoryId);
-		dbHandler.addRecord(rec);
+		long id = dbHandler.addRecord(rec);
 		mEditQuickTrack.setText(null);
+		// Go to that record
+		mRecordSelectedListener.onRecordSelected(id);
 	}
 	
 	public void handleTrack() {
 		// Parse the output
 		Cursor cursor = (Cursor) mCategories.getItemAtPosition(0);
 		trackCategory(cursor.getInt(0));
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+    	 super.onAttach(activity);
+         try {
+             mRecordSelectedListener = (OnRecordSelectedListener) activity;
+         } catch (ClassCastException e) {
+             throw new ClassCastException(activity.toString() + " must implement OnRecordSelectedListener");
+         }
 	}
 }
